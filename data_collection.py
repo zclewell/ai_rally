@@ -132,6 +132,7 @@ if __name__ == '__main__':
 
     os.mkdir(screenshot_path)
 
+    # TODO this is very slow, 1s per frame to save, investigate faster ways to dump
     for i in tqdm.tqdm(range(len(frames))):
         frame = frames[i]
         timestamp = timestamps[i]
