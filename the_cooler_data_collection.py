@@ -10,7 +10,7 @@ from data_collection import XboxController
 
 TARGET_FPS = 10.0
 
-region =  {"top": 0, "left": 768, "width": 1024, "height": 1024}
+region =  {"top": 136, "left": 768, "width": 1024, "height": 1024}
 
 should_run = True
 
