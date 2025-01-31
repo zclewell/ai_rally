@@ -28,7 +28,7 @@ class XboxController(object):
         # self.RightBumper = 0
         # self.A = 0
         # self.X = 0
-        # self.Y = 0
+        self.Y = 0
         self.B = 0
         # self.LeftThumb = 0
         # self.RightThumb = 0
@@ -51,7 +51,7 @@ class XboxController(object):
         handbrake = self.B
         clutch = self.LeftBumper
 
-        return [steering, throttle, brake, handbrake, clutch]
+        return [steering, throttle, brake, handbrake, clutch, self.Y]
 
 
     def _monitor_controller(self):
@@ -76,8 +76,8 @@ class XboxController(object):
                 #     self.RightBumper = event.state
                 # elif event.code == 'BTN_SOUTH':
                 #     self.A = event.state
-                # elif event.code == 'BTN_NORTH':
-                #     self.Y = event.state #previously switched with X
+                elif event.code == 'BTN_NORTH':
+                    self.Y = event.state #previously switched with X
                 # elif event.code == 'BTN_WEST':
                 #     self.X = event.state #previously switched with Y
                 elif event.code == 'BTN_EAST':
@@ -109,6 +109,10 @@ if __name__ == '__main__':
     last_ts = time.time()
     interval = 1.0 / TARGET_FPS
 
+    screenshot_path = SCREENSHOT_PATH + '/' + str(time.time())
+
+    os.mkdir(screenshot_path)
+
     try:
         while True:
             current_ts = time.time()
@@ -116,30 +120,31 @@ if __name__ == '__main__':
                 continue
             if current_ts - last_ts > 2*interval:
                 print('LAGGING')
-            else:
-                print(current_ts - last_ts)
+            # else:
+            #     print(current_ts - last_ts)
 
             last_ts = current_ts
 
-            frames.append(pyautogui.screenshot())
             inputs.append(joy.read())
+            image = pyautogui.screenshot()
+            image.save(f'{screenshot_path}/{last_ts}.png')
+            frames.append(pyautogui.screenshot())
+
             timestamps.append(last_ts)
 
     except KeyboardInterrupt:
         print('dumping frames to screenshots')
 
-    screenshot_path = SCREENSHOT_PATH + '/' + str(timestamps[0])
 
-    os.mkdir(screenshot_path)
 
-    # TODO this is very slow, 1s per frame to save, investigate faster ways to dump
-    for i in tqdm.tqdm(range(len(frames))):
-        frame = frames[i]
-        timestamp = timestamps[i]
+    # # TODO this is very slow, 1s per frame to save, investigate faster ways to dump
+    # for i in tqdm.tqdm(range(len(frames))):
+    #     frame = frames[i]
+    #     timestamp = timestamps[i]
 
-        frame.save(f'{screenshot_path}/{timestamp}.png')
+    #     frame.save(f'{screenshot_path}/{timestamp}.png')
 
-    print('saving inputs to json')
+    # print('saving inputs to json')
 
     input_json = []
     for input, timestamp in zip(inputs, timestamps):

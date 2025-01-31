@@ -17,6 +17,14 @@ Frames are stored in the 'screenshots' dir in a subdir with the python timestamp
 
 Input data is stored in a json file in the same directory as the frames from a collection, they are stored in an ordered tuple of the form (timestamp, steering, throttle, brake, clutch, handbrake).
 
+### the_cooler_data_collection.py
+
+Revision on data_collection.py, inputs.json format is the same but images captured are cropped to 1024x1024
+
+Utlizizes multithreading to offload some of the file IO during collection.
+
+Upon running the script awaits throttle input to start collection. pressing "Y" while collecting data will end the collection
+
 ### input_visualizer.py
 
 Library for visualizig input data via pygame. Running it directly will playback a trace of test inputs exercising all inputs.
