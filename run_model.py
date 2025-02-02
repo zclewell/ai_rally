@@ -39,17 +39,6 @@ print('Moving to gpu')
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)  # Move the model to the GPU if available
 
-# example_image = torch.randn(1, 3, 128, 128) # Example tensor
-# example_image = example_image.to(device) # Move to device
-
-# output = model(example_image)
-
-
-# # from input_visualizer import InputVisualizer
-
-
-# TARGET_FPS = 30
-
 region =  {"top": 136, "left": 768, "width": 1024, "height": 1024}
 
 def apply_inputs_to_gamepad(gamepad, inputs):
@@ -62,9 +51,6 @@ def apply_inputs_to_gamepad(gamepad, inputs):
     gamepad.update()
 
 
-
-
-
 def clamp(n, min, max): 
     if n < min: 
         return min
@@ -73,6 +59,17 @@ def clamp(n, min, max):
     else: 
         return n 
 
+def clamp_outputs(outputs):
+    steering, throttle, brake, handbrake, clutch = output[0:]
+
+    steering = clamp(steering, -1.0, 1.0)
+    throttle = clamp(throttle, 0.0, 1.0)
+    brake = clamp(brake, 0.0, 1.0)
+    handbrake = 0.0 if handbrake < 0.5 else 1.0
+    clutch = 0.0 if clutch < 0.5 else 1.0
+
+    return steering, throttle, brake, handbrake, clutch
+        
 
 
 with mss.mss() as sct:
@@ -126,23 +123,15 @@ with mss.mss() as sct:
             output = model(tensor)
             output = output[0][0:]
 
-             
-            output[0] = clamp(output[0], -1.0, 1.0)
-            output[1] = clamp(output[1], 0.0, 1.0)
-            output[2] = clamp(output[2], 0.0, 1.0)
-            output[3] = 0.0 if output[3] < 0.5 else 1.0
-            output[4] = 0.0 if output[4] < 0.5 else 1.0
-            steering, throttle, braking, handbrake, clutch = output[0:]
-
-            print(float(steering), float(throttle), float(braking))
+            output = clamp_outputs(output)
 
             apply_inputs_to_gamepad(gamepad, output)
             vis.draw_frame_from_input(*output)
         else: 
-            output = [0.0, 0.0, 0.0, 0.0, 0.0]
+            neutral_output = [0.0, 0.0, 0.0, 0.0, 0.0]
             gamepad.reset()
-            apply_inputs_to_gamepad(gamepad,output)
-            vis.draw_frame_from_input(*output)
+            apply_inputs_to_gamepad(gamepad,neutral_output)
+            vis.draw_frame_from_input(*neutral_output)
 
 
             

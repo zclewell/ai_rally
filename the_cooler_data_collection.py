@@ -47,7 +47,7 @@ joy = XboxController()
 
 inputs = []
 
-prefix = f'{time.time()}'
+prefix = f'datacollects/{time.time()}'
 
 os.mkdir(prefix)
 
@@ -55,7 +55,7 @@ try:
     with mss.mss() as sct:
         print('waiting for throttle input to start collection')
         while should_run:
-            _, throttle, _, _, _, _ = joy.read()
+            _, throttle, _, _, _, _, _ = joy.read()
 
             # Avoid using 0 in case of controller drift
             if throttle > 0.01:
@@ -72,7 +72,7 @@ try:
 
             last_ts = current_ts
 
-            steering, throttle, brake, handbrake, clutch, quit = joy.read()
+            steering, throttle, brake, handbrake, clutch, quit, _ = joy.read()
 
             inputs.append((last_ts, steering, throttle, brake, handbrake, clutch))
             ss = sct.grab(region)
