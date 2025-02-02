@@ -26,4 +26,4 @@ if __name__ == '__main__':
             continue
 
         inputs = joy.read()
-        vis.draw_frame_from_input(*joy.read())
+        vis.draw_frame_from_input(*joy.read()[:-2])

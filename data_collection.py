@@ -25,7 +25,7 @@ class XboxController(object):
         self.LeftTrigger = 0
         self.RightTrigger = 0
         self.LeftBumper = 0
-        # self.RightBumper = 0
+        self.RightBumper = 0
         # self.A = 0
         # self.X = 0
         self.Y = 0
@@ -51,7 +51,7 @@ class XboxController(object):
         handbrake = self.B
         clutch = self.LeftBumper
 
-        return [steering, throttle, brake, handbrake, clutch, self.Y]
+        return [steering, throttle, brake, handbrake, clutch, self.Y, self.RightBumper]
 
 
     def _monitor_controller(self):
@@ -72,8 +72,8 @@ class XboxController(object):
                     self.RightTrigger = event.state / XboxController.MAX_TRIG_VAL # normalize between 0 and 1
                 elif event.code == 'BTN_TL':
                     self.LeftBumper = event.state
-                # elif event.code == 'BTN_TR':
-                #     self.RightBumper = event.state
+                elif event.code == 'BTN_TR':
+                    self.RightBumper = event.state
                 # elif event.code == 'BTN_SOUTH':
                 #     self.A = event.state
                 elif event.code == 'BTN_NORTH':
